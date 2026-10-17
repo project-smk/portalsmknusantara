@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#12263A">
 <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
@@ -25,6 +25,9 @@
 }
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
+html{--app-h:100%}
+@supports (height:100dvh){html{--app-h:100dvh}}
+body{height:var(--app-h)}
 body{background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 :focus-visible{outline:3px solid #7FB0FF;outline-offset:2px}
@@ -91,7 +94,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 
 
 /* Mode layar penuh: aplikasi memenuhi layar, menu lewat tombol melayang */
-.app.full{grid-template-columns:1fr;grid-template-rows:1fr}
+.app.full{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 .app.full .side,.app.full .top{display:none}
 body.full{background:var(--bg)}
 .app.full{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -152,15 +155,16 @@ body.full{background:var(--bg)}
   .top{min-height:46px;padding:6px 14px}
 }
 /* Smart Presensi: iframe digeser 3px ke atas untuk menyembunyikan banner Google */
-.frame.shift{overflow:hidden}
-.frame.shift iframe{position:absolute;top:-3px;left:0;height:calc(100% + 3px)}
+.frame.shift{overflow:hidden;--shift:3px}
+.frame.shift iframe{position:absolute;top:calc(var(--shift) * -1);left:0;height:calc(100% + var(--shift))}
 
 /* Jembatan kamera Smart Presensi (scan barcode & selfie langsung dari kamera) */
-#scanOverlay,#selfieOverlay{position:fixed;inset:0;z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;background:rgba(15,23,42,.92)}
+#scanOverlay,#selfieOverlay{position:fixed;inset:0;z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;justify-content:safe center;gap:14px;padding:16px;overflow:auto;background:rgba(15,23,42,.92)}
 #scanOverlay.show,#selfieOverlay.show{display:flex}
-#scanOverlay video{width:min(92vw,420px);aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:#000}
-#selfieOverlay video{width:min(92vw,420px);aspect-ratio:3/4;max-height:70vh;object-fit:cover;border-radius:14px;background:#000}
+#scanOverlay video{width:min(92vw,420px,56vh);width:min(92vw,420px,56dvh);aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:#000}
+#selfieOverlay video{width:min(92vw,420px);aspect-ratio:3/4;max-height:70vh;max-height:70dvh;object-fit:cover;border-radius:14px;background:#000}
 #scanOverlay p,#selfieOverlay p{color:#fff;font-size:14px;font-weight:600;text-align:center}
+@media (max-height:520px){#selfieOverlay video{max-height:50dvh}}
 #selfieOverlay .row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 #scanOverlay button,#selfieOverlay button{padding:12px 26px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;color:#0f172a}
 #selfieOverlay #selfieFlip{display:none;background:#e2e8f0}
@@ -228,6 +232,22 @@ body.full{background:var(--bg)}
   </button>
 </div>
 <script>
+// Tinggi aplikasi = area layar yang benar-benar terlihat (bar alamat/toolbar/keyboard HP naik-turun)
+(function(){
+  const root = document.documentElement; let raf = 0;
+  function fit(){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const vv = window.visualViewport; let h = window.innerHeight;
+      if(vv && vv.scale <= 1.01) h = Math.min(h, vv.height + vv.offsetTop);
+      root.style.setProperty('--app-h', Math.round(h) + 'px');
+    });
+  }
+  ['resize','orientationchange','pageshow'].forEach(ev => addEventListener(ev, fit));
+  document.addEventListener('fullscreenchange', fit);
+  if(window.visualViewport) visualViewport.addEventListener('resize', fit);
+  fit(); setTimeout(fit, 300); setTimeout(fit, 1200);
+})();
 const ICONS = {
   exam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m8.5 12.5 2 2 4-4.5"/><path d="M9 18h6"/></svg>',
   presensi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="10" r="2.6"/><path d="M7.5 17c.6-2 2.4-3.2 4.5-3.2s3.9 1.2 4.5 3.2"/></svg>',
@@ -383,14 +403,24 @@ $('fabPanel').addEventListener('click', e => {
     if(open){
       buildPanel();
       const r = fab.getBoundingClientRect();
-      fab.classList.toggle('left', r.left < innerWidth/2);
-      const pv = $('fabPanel');
-      pv.style.bottom = r.top > innerHeight/2 ? '56px' : 'auto';
-      pv.style.top = r.top > innerHeight/2 ? 'auto' : '56px';
+      const pv = $('fabPanel'), up = r.top > innerHeight/2;
+      const pw = Math.min(230, innerWidth - 16);
+      const L = Math.min(Math.max(8, r.left < innerWidth/2 ? r.left : r.right - pw), innerWidth - pw - 8);
+      pv.style.width = pw + 'px'; pv.style.right = 'auto'; pv.style.left = (L - r.left) + 'px';
+      pv.style.bottom = up ? '56px' : 'auto'; pv.style.top = up ? 'auto' : '56px';
+      pv.style.maxHeight = Math.max(140, (up ? r.top : innerHeight - r.bottom) - 20) + 'px';
+      pv.style.overflowY = 'auto';
     }
     $('fabPanel').hidden = !open; btn.setAttribute('aria-expanded', String(open));
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+  function clampFab(){
+    if(!fab.style.left) return;
+    fab.style.left = Math.min(Math.max(0, parseFloat(fab.style.left)), Math.max(0, innerWidth - 46)) + 'px';
+    fab.style.top = Math.min(Math.max(0, parseFloat(fab.style.top)), Math.max(0, innerHeight - 46)) + 'px';
+    closePanel();
+  }
+  addEventListener('resize', clampFab); addEventListener('orientationchange', clampFab);
 })();
 
 // Jembatan kamera Smart Presensi
