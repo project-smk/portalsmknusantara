@@ -151,8 +151,24 @@ body.full{background:var(--bg)}
 @media (max-height:480px) and (orientation:landscape){
   .top{min-height:46px;padding:6px 14px}
 }
+/* Smart Presensi: iframe digeser 3px ke atas untuk menyembunyikan banner Google */
+.frame.shift{overflow:hidden}
+.frame.shift iframe{position:absolute;top:-3px;left:0;height:calc(100% + 3px)}
+
+/* Jembatan kamera Smart Presensi (scan barcode & selfie langsung dari kamera) */
+#scanOverlay,#selfieOverlay{position:fixed;inset:0;z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;background:rgba(15,23,42,.92)}
+#scanOverlay.show,#selfieOverlay.show{display:flex}
+#scanOverlay video{width:min(92vw,420px);aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:#000}
+#selfieOverlay video{width:min(92vw,420px);aspect-ratio:3/4;max-height:70vh;object-fit:cover;border-radius:14px;background:#000}
+#scanOverlay p,#selfieOverlay p{color:#fff;font-size:14px;font-weight:600;text-align:center}
+#selfieOverlay .row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+#scanOverlay button,#selfieOverlay button{padding:12px 26px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;color:#0f172a}
+#selfieOverlay #selfieFlip{display:none;background:#e2e8f0}
+#selfieOverlay.canflip #selfieFlip{display:inline-block}
+#selfieOverlay #selfieShot{background:#059669;color:#fff}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -187,6 +203,24 @@ body.full{background:var(--bg)}
   </section>
 </div>
 
+<!-- Layar scan kamera untuk barcode presensi -->
+<div id="scanOverlay" role="dialog" aria-live="polite">
+  <p>Arahkan kamera ke barcode</p>
+  <video id="scanVideo" playsinline muted></video>
+  <button id="scanCancel" type="button">Batal</button>
+</div>
+
+<!-- Layar selfie: hanya kamera langsung (tanpa pilihan galeri) -->
+<div id="selfieOverlay" role="dialog" aria-live="polite">
+  <p id="selfieHint">Posisikan wajah di dalam bingkai</p>
+  <video id="selfieVideo" playsinline muted></video>
+  <div class="row">
+    <button id="selfieShot" type="button">Ambil Foto</button>
+    <button id="selfieFlip" type="button">Balik Kamera</button>
+    <button id="selfieCancel" type="button">Batal</button>
+  </div>
+</div>
+
 <div class="fab" id="fab" hidden>
   <div class="fab-panel" id="fabPanel" hidden></div>
   <button class="fab-btn" id="fabBtn" aria-label="Menu portal" aria-expanded="false" aria-controls="fabPanel">
@@ -202,7 +236,7 @@ const ICONS = {
 // Izin fitur perangkat yang diteruskan ke semua aplikasi di dalam iframe
 const ALLOW = ['camera','microphone','geolocation','screen-wake-lock','fullscreen','clipboard-read','clipboard-write','web-share','autoplay','accelerometer','gyroscope','magnetometer','picture-in-picture','display-capture','storage-access','encrypted-media','publickey-credentials-get'].map(x => x + ' *').join('; ');
 const APPS = [
-  {id:'smartpresensi', name:'Smart Presensi', short:'Presensi', desc:'Presensi siswa dengan selfie dan lokasi GPS, dipantau guru dan wali kelas.', url:'https://project-smk.github.io/smartpresensi/', icon:'presensi', color:'#0E9F8B', perm:'camera; fullscreen; geolocation'},
+  {id:'smartpresensi', name:'Smart Presensi', short:'Presensi', desc:'Presensi siswa dengan selfie dan lokasi GPS, dipantau guru dan wali kelas.', url:'https://project-smk.github.io/smartpresensi/', src:'https://script.google.com/macros/s/AKfycbyG7hUzKSvnVtASlSI-s4Q8uWNm4PHATMVfAkeseJ6BytH6NP7-Lgwawyy0NYDg_Xqu/exec', icon:'presensi', color:'#0E9F8B', perm:'camera; fullscreen; geolocation'},
   {id:'examcbt', name:'Exam CBT', short:'Ujian', desc:'Ujian berbasis web untuk siswa, lengkap dengan panel admin.', url:'https://project-smk.github.io/examcbt/', icon:'exam', color:'#2F6FED', perm:'fullscreen'},
   {id:'ekskulgenius', name:'Ekskul Genius', short:'Ekskul', desc:'Kelola kegiatan, anggota, dan prestasi ekstrakurikuler.', url:'https://project-smk.github.io/ekskulgenius/', icon:'ekskul', color:'#EE8A1E', perm:'fullscreen'}
 ];
@@ -227,7 +261,7 @@ APPS.forEach(a => {
 
 function makeFrame(a){
   const wrap = document.createElement('div');
-  wrap.className = 'frame'; wrap.hidden = true; wrap.style.setProperty('--c', a.color);
+  wrap.className = 'frame' + (a.src ? ' shift' : ''); wrap.hidden = true; wrap.style.setProperty('--c', a.color);
   wrap.innerHTML = `<div class="loader"><span class="ico l-ico">${ICONS[a.icon]}</span><b class="l-title">${a.name}</b><div class="l-bar"><div class="l-fill"></div></div><span class="l-pct">0%</span><p class="l-txt">Menyiapkan aplikasi…</p></div>`;
   const f = document.createElement('iframe');
   f.title = a.name; f.allow = ALLOW; f.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
@@ -255,13 +289,14 @@ function makeFrame(a){
     tGive = setTimeout(finish, 40000); // pengaman: tutup layar loading bila load tidak terpicu
   }
   f.addEventListener('load', finish);
-  start(); f.src = a.url;
+  start(); f.src = a.src || a.url;
   wrap.appendChild(f);
   $('stage').appendChild(wrap);
-  frames[a.id] = {wrap, f, loader, restart(){ start(); f.src = a.url; }};
+  frames[a.id] = {wrap, f, loader, restart(){ start(); f.src = a.src || a.url; }};
 }
 
 function openApp(id, fromHash){
+  SPBridge.stop();
   const a = APPS.find(x => x.id === id); if(!a) return goHome();
   if(!frames[id]) makeFrame(a);
   Object.entries(frames).forEach(([k,v]) => v.wrap.hidden = (k !== id));
@@ -274,6 +309,7 @@ function openApp(id, fromHash){
   if(!fromHash && location.hash !== '#' + id) history.pushState(null,'','#' + id);
 }
 function goHome(fromHash){
+  SPBridge.stop();
   Object.values(frames).forEach(v => v.wrap.hidden = true);
   $('home').hidden = false; current = null;
   setFull(false); closePanel();
@@ -355,6 +391,144 @@ $('fabPanel').addEventListener('click', e => {
     $('fabPanel').hidden = !open; btn.setAttribute('aria-expanded', String(open));
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+})();
+
+// Jembatan kamera Smart Presensi
+// Apps Script memblokir kamera di dalam aplikasinya, jadi aplikasi meminta halaman induk (portal ini)
+// membuka kamera lalu mengirim hasilnya lewat postMessage. Protokolnya sama dengan halaman pembungkus lama.
+const SPBridge = (function(){
+  const okOrigin = o => /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com)$/.test(o);
+  const scanOv = $('scanOverlay'), scanVid = $('scanVideo'), selOv = $('selfieOverlay'), selVid = $('selfieVideo');
+  const scan = {stream:null, timer:0, busy:false, target:null, origin:'', detector:null};
+  const sel = {stream:null, target:null, origin:'', rear:false, canFlip:false};
+
+  function send(t, type, extra){
+    if(!t.target) return;
+    try{ t.target.postMessage(Object.assign({type}, extra || {}), t.origin); }catch(e){}
+  }
+  function errMsg(e, rear, selfie){
+    const n = (e && e.name) || '';
+    if(n === 'NotAllowedError' || n === 'SecurityError') return 'Izin kamera ditolak/diblokir. Izinkan kamera untuk situs ini (ikon gembok di bilah alamat), lalu coba lagi.';
+    if(n === 'NotFoundError' || n === 'OverconstrainedError') return selfie ? (rear ? 'Kamera belakang tidak ditemukan di perangkat ini.' : 'Kamera depan tidak ditemukan di perangkat ini.') : 'Kamera tidak ditemukan di perangkat ini. Gunakan browser lain.';
+    if(n === 'NotReadableError') return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi kamera lalu coba lagi.';
+    return 'Kamera tidak bisa dibuka' + (n ? ' (' + n + ')' : '') + '.';
+  }
+  function getCam(facing){
+    return navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing}}, audio:false})
+      .catch(e => (e && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError'))
+        ? navigator.mediaDevices.getUserMedia({video:true, audio:false}) : Promise.reject(e));
+  }
+  const hasCam = () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+  // ----- Scan barcode -----
+  function scanStop(){
+    clearTimeout(scan.timer); scan.busy = false;
+    if(scan.stream){ scan.stream.getTracks().forEach(t => t.stop()); scan.stream = null; }
+    scanVid.srcObject = null; scanOv.classList.remove('show');
+  }
+  function decode(c, ctx, w, h){
+    const viaJsQR = () => {
+      if(typeof jsQR === 'undefined') return Promise.resolve(null);
+      const r = jsQR(ctx.getImageData(0, 0, w, h).data, w, h, {inversionAttempts:'attemptBoth'});
+      return Promise.resolve(r ? r.data : null);
+    };
+    if('BarcodeDetector' in window){
+      try{
+        scan.detector = scan.detector || new BarcodeDetector({formats:['qr_code']});
+        return scan.detector.detect(c).then(r => (r && r.length) ? r[0].rawValue : viaJsQR(), viaJsQR);
+      }catch(e){}
+    }
+    return viaJsQR();
+  }
+  function scanStart(src, origin){
+    if(scan.stream) return;
+    scan.target = src; scan.origin = origin;
+    if(!hasCam()){ send(scan, 'SP_SCAN_ERROR', {message:'Browser tidak mendukung kamera langsung. Gunakan browser lain.'}); return; }
+    getCam('environment').then(s => {
+      scan.stream = s; scanVid.muted = true; scanVid.srcObject = s;
+      scanOv.classList.add('show');
+      const p = scanVid.play(); if(p && p.catch) p.catch(() => {});
+      const c = document.createElement('canvas'), ctx = c.getContext('2d', {willReadFrequently:true});
+      (function loop(){
+        if(!scan.stream) return;
+        if(scanVid.videoWidth && !scan.busy){
+          scan.busy = true;
+          const k = Math.min(1, 960 / scanVid.videoWidth), w = Math.round(scanVid.videoWidth * k), h = Math.round(scanVid.videoHeight * k);
+          c.width = w; c.height = h; ctx.drawImage(scanVid, 0, 0, w, h);
+          decode(c, ctx, w, h).then(text => {
+            scan.busy = false;
+            if(text && scan.stream){ scanStop(); send(scan, 'SP_SCAN_RESULT', {text}); }
+          }, () => { scan.busy = false; });
+        }
+        scan.timer = setTimeout(loop, 150);
+      })();
+    }).catch(e => send(scan, 'SP_SCAN_ERROR', {message:errMsg(e)}));
+  }
+  $('scanCancel').addEventListener('click', () => { scanStop(); send(scan, 'SP_SCAN_CANCEL'); });
+
+  // ----- Selfie / foto bukti -----
+  function selHint(){
+    if(!sel.canFlip) return 'Posisikan wajah di dalam bingkai';
+    return sel.rear ? 'Arahkan kamera belakang ke bukti/kondisi Anda' : 'Kamera depan aktif. Tekan Balik Kamera untuk kamera belakang';
+  }
+  function selStop(){
+    if(sel.stream){ sel.stream.getTracks().forEach(t => t.stop()); sel.stream = null; }
+    selVid.srcObject = null; selOv.classList.remove('show');
+  }
+  function selOpen(){
+    selOv.classList.toggle('rear', sel.rear);
+    $('selfieHint').textContent = selHint();
+    return getCam(sel.rear ? 'environment' : 'user').then(s => {
+      sel.stream = s; selVid.muted = true; selVid.srcObject = s;
+      selOv.classList.add('show');
+      const p = selVid.play(); if(p && p.catch) p.catch(() => {});
+    });
+  }
+  // facing 'environment' = foto bukti PKL/Izin/Sakit (mulai kamera belakang, boleh dibalik). Selain itu: selfie Hadir (kamera depan saja).
+  function selStart(src, origin, facing){
+    if(sel.stream) return;
+    sel.target = src; sel.origin = origin;
+    sel.canFlip = (facing === 'environment'); sel.rear = sel.canFlip;
+    selOv.classList.toggle('canflip', sel.canFlip);
+    if(!hasCam()){ send(sel, 'SP_SELFIE_ERROR', {message:'Browser tidak mendukung kamera langsung.'}); return; }
+    selOpen().catch(e => send(sel, 'SP_SELFIE_ERROR', {message:errMsg(e, sel.rear, true)}));
+  }
+  $('selfieFlip').addEventListener('click', () => {
+    if(!sel.stream || !sel.canFlip) return;
+    sel.stream.getTracks().forEach(t => t.stop()); sel.stream = null; selVid.srcObject = null;
+    sel.rear = !sel.rear;
+    selOpen().catch(e => { selStop(); send(sel, 'SP_SELFIE_ERROR', {message:errMsg(e, sel.rear, true)}); });
+  });
+  $('selfieShot').addEventListener('click', () => {
+    if(!sel.stream || !selVid.videoWidth) return;
+    let w = selVid.videoWidth, h = selVid.videoHeight; const maxDim = sel.canFlip ? 900 : 400;
+    if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+    else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    c.getContext('2d').drawImage(selVid, 0, 0, w, h);
+    const dataUrl = c.toDataURL('image/jpeg', sel.canFlip ? 0.6 : 0.5);
+    selStop(); send(sel, 'SP_SELFIE_RESULT', {dataUrl});
+  });
+  $('selfieCancel').addEventListener('click', () => { selStop(); send(sel, 'SP_SELFIE_CANCEL'); });
+
+  // ----- Pesan dari Smart Presensi -----
+  window.addEventListener('message', e => {
+    if(current !== 'smartpresensi') return;
+    if(!okOrigin(e.origin) || !e.data || typeof e.data !== 'object') return;
+    const t = e.data.type;
+    if(t === 'SP_SCAN_REQUEST'){
+      try{ e.source.postMessage({type:'SP_SCAN_ACK'}, e.origin); }catch(x){}
+      scanStart(e.source, e.origin);
+    }else if(t === 'SP_SELFIE_REQUEST'){
+      const facing = e.data.facing === 'environment' ? 'environment' : 'user';
+      try{ e.source.postMessage({type:'SP_SELFIE_ACK', facing}, e.origin); }catch(x){}
+      selStart(e.source, e.origin, e.data.facing);
+    }else if(t === 'SP_FULLSCREEN_REQUEST'){
+      const el = document.documentElement, rq = el.requestFullscreen || el.webkitRequestFullscreen;
+      if(rq && !document.fullscreenElement){ try{ const p = rq.call(el); if(p && p.catch) p.catch(() => {}); }catch(x){} }
+    }
+  });
+  return {stop(){ scanStop(); selStop(); }};
 })();
 
 $('brandBtn').onclick = () => goHome();
