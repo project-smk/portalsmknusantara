@@ -244,7 +244,7 @@ function openApp(id, fromHash){
   $('ext').href = a.url; $('ext').hidden = false; $('reload').hidden = false;
   document.querySelectorAll('.nav-item').forEach(n => n.dataset.id === id ? n.setAttribute('aria-current','page') : n.removeAttribute('aria-current'));
   document.title = a.name + ' · Portal SMK Nusantara';
-  if(!fromHash) history.replaceState(null,'','#' + id);
+  if(!fromHash && location.hash !== '#' + id) history.pushState(null,'','#' + id);
 }
 function goHome(fromHash){
   Object.values(frames).forEach(v => v.wrap.hidden = true);
@@ -254,7 +254,7 @@ function goHome(fromHash){
   $('ext').hidden = true; $('reload').hidden = true;
   document.querySelectorAll('.nav-item').forEach(n => n.removeAttribute('aria-current'));
   document.title = 'Portal SMK Swasta Nusantara Lubuk Pakam';
-  if(!fromHash) history.replaceState(null,'',location.pathname + location.search);
+  if(!fromHash && location.hash) history.pushState(null,'',location.pathname + location.search);
 }
 
 // Wake lock: layar tetap menyala selama aplikasi terbuka
@@ -335,7 +335,12 @@ $('reload').onclick = () => {
 window.addEventListener('hashchange', () => {
   const id = location.hash.slice(1); id ? openApp(id,true) : goHome(true);
 });
-if(location.hash) openApp(location.hash.slice(1), true);
+if(location.hash){
+  // Buka lewat tautan langsung: jadikan beranda sebagai halaman sebelumnya agar tombol back kembali ke beranda
+  const first = location.hash.slice(1);
+  history.replaceState(null,'',location.pathname + location.search);
+  openApp(first);
+}
 </script>
 </body>
 </html>
