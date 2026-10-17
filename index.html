@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#0B1F33">
+<meta name="theme-color" content="#F6F3EC">
 <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
@@ -14,76 +14,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#0B1F33; --navy2:rgba(255,255,255,.09); --bg:#EEF3F7; --surface:#fff; --ink:#0F1F2E; --muted:#5B6B7B; --line:#DCE4EB;
-  --side-text:#BFD0E0; --side-active:#fff;
-  --exam:#2F6FED; --presensi:#0E9F8B; --ekskul:#EE8A1E; --accent:#3B82F6;
-  --side-w:292px; --gap:12px; --shadow:0 1px 2px rgba(11,31,51,.06),0 8px 24px rgba(11,31,51,.08);
+  --bg:#F6F3EC; --surface:#fff; --ink:#1A1B1E; --muted:#6A6D73; --line:#E6E1D6; --navy:#1A1B1E; --navy2:rgba(0,0,0,.06);
+  --exam:#2F6FED; --presensi:#0E9F8B; --ekskul:#EE8A1E; --accent:#2F6FED; --bar-h:68px;
+  --shadow:0 1px 2px rgba(26,27,30,.05),0 10px 30px rgba(26,27,30,.07);
   font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#070E16; --surface:#111D2B; --ink:#E8EEF3; --muted:#93A3B3; --line:#22344A; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35)}
+  :root{--bg:#121316; --surface:#1B1D22; --ink:#EEF0F3; --muted:#98A0AB; --line:#2A2D34; --navy:#EEF0F3; --navy2:rgba(255,255,255,.08); --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35)}
 }
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
 html{--app-h:100%}
 @supports (height:100dvh){html{--app-h:100dvh}}
-body{height:var(--app-h);background:var(--navy);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow:hidden;-webkit-font-smoothing:antialiased}
+body{height:var(--app-h);background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px);overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid #7FB0FF;outline-offset:2px}
 
-.app{display:grid;grid-template-columns:var(--side-w) minmax(0,1fr);height:100%;background:linear-gradient(160deg,#0B1F33 0%,#102C47 55%,#0B3B45 100%)}
-
-/* Sidebar */
-.side{display:flex;flex-direction:column;padding:22px 16px;gap:24px;min-height:0;overflow:auto;color:var(--side-text)}
-.brand{display:flex;align-items:center;gap:12px;padding:10px;text-align:left;color:#fff;width:100%;border-radius:18px;background:var(--navy2);border:1px solid rgba(255,255,255,.1)}
-.brand-mark{flex:none;width:46px;height:46px;border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+/* Kerangka: bilah navigasi di atas, konten di bawah */
+.app{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100%}
+.side{display:flex;align-items:center;gap:18px;padding:10px clamp(14px,3vw,32px);background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);min-height:var(--bar-h);z-index:5}
+.brand{display:flex;align-items:center;gap:12px;text-align:left;flex:none;width:auto;color:var(--ink)}
+.brand-mark{flex:none;width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line)}
 .brand-mark img{width:100%;height:100%;display:block;object-fit:contain;padding:3px}
-.brand b{display:block;font-size:15px;font-weight:800;line-height:1.2}
-.brand span{font-size:12px;color:var(--side-text)}
-.nav{display:flex;flex-direction:column;gap:8px}
-.nav::before{content:"APLIKASI";font-size:11px;font-weight:700;letter-spacing:.14em;opacity:.55;padding:0 10px 2px}
-.nav-item{position:relative;display:flex;align-items:center;gap:12px;padding:10px;border-radius:16px;text-align:left;width:100%;transition:background .18s,transform .18s}
-.nav-item[aria-current="page"]{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 38%,transparent),rgba(255,255,255,.07));color:var(--side-active);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-.nav-item[aria-current="page"]::after{content:"";position:absolute;right:10px;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 30%,transparent)}
-@media (hover:hover){.nav-item:hover{background:var(--navy2);transform:translateX(2px)}}
-.ico{flex:none;width:44px;height:44px;border-radius:14px;background:var(--c);display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.18)}
-.ico svg{width:26px;height:26px}
-.ico:has(img){background:#fff;overflow:hidden}
+.brand b{display:block;font-size:15px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex:1;justify-content:center;gap:6px;padding:5px;border-radius:999px;background:var(--bg);border:1px solid var(--line);max-width:max-content;margin:0 auto}
+.nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:999px;text-align:left;transition:background .18s,box-shadow .18s}
+@media (hover:hover){.nav-item:hover{background:color-mix(in srgb,var(--c) 10%,transparent)}}
+.nav-item[aria-current="page"]{background:var(--surface);box-shadow:0 0 0 2px var(--c),var(--shadow)}
+.ico{flex:none;width:36px;height:36px;border-radius:50%;background:var(--c);display:grid;place-items:center;color:#fff}
+.ico svg{width:21px;height:21px}
+.ico:has(img){background:#fff;overflow:hidden;border:1px solid var(--line)}
 .ico img{width:100%;height:100%;display:block;object-fit:contain;padding:3px}
-.nav-text b{display:block;font-size:14px;font-weight:700}
-.nav-text span{font-size:12px;opacity:.7}
-.side-foot{margin-top:auto;font-size:12px;padding:12px;line-height:1.55;opacity:.75;border-radius:14px;background:rgba(255,255,255,.05)}
+.nav-text b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap}
+.nav-text span{display:none}
+.side-foot{display:none}
 
-/* Main */
-.main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg);border-radius:26px 0 0 26px;overflow:hidden;box-shadow:-10px 0 30px rgba(0,0,0,.18)}
-.top{display:flex;align-items:center;gap:10px;padding:12px 22px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);min-height:62px}
-.top h1{font-size:17px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
-.tbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);font-size:13px;font-weight:600;background:var(--surface);text-decoration:none;color:inherit;transition:background .15s,border-color .15s}
+/* Konten */
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:14px clamp(14px,3vw,32px) 10px;min-height:56px}
+.top h1{font-size:clamp(18px,2vw,24px);font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.02em}
+.tbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600;background:var(--surface);text-decoration:none;color:inherit;transition:border-color .15s,color .15s}
 @media (hover:hover){.tbtn:hover{border-color:var(--accent);color:var(--accent)}}
 .tbtn svg{width:18px;height:18px}
 .tbtn[hidden]{display:none}
 .stage{position:relative;flex:1;min-height:0}
+.frame{border-radius:22px 22px 0 0;overflow:hidden}
 
-/* Home */
-.home{position:absolute;inset:0;overflow:auto;padding:clamp(16px,3vw,36px)}
+/* Beranda gaya bento */
+.home{position:absolute;inset:0;overflow:auto;padding:6px clamp(14px,3vw,32px) 32px}
 .home[hidden]{display:none}
-.hello{position:relative;overflow:hidden;max-width:1100px;margin-bottom:26px;padding:clamp(22px,4vw,42px);border-radius:28px;color:#fff;background:radial-gradient(circle at 85% 20%,rgba(238,138,30,.55),transparent 42%),radial-gradient(circle at 10% 110%,rgba(14,159,139,.6),transparent 45%),linear-gradient(135deg,#143A63,#2F6FED);box-shadow:var(--shadow)}
-.hello::before{content:"SMK SWASTA NUSANTARA · LUBUK PAKAM";display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.16);margin-bottom:16px}
-.hello::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;border:30px solid rgba(255,255,255,.08)}
-.hello h2{position:relative;font-size:clamp(24px,3.6vw,40px);font-weight:800;line-height:1.15;letter-spacing:-.02em}
-.hello p{position:relative;margin-top:10px;color:rgba(255,255,255,.85);font-size:clamp(14px,1.6vw,16px);line-height:1.6;max-width:56ch}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:1100px}
-.card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s}
-.card::before{content:"";position:absolute;inset:0 0 auto 0;height:90px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 18%,transparent),transparent);pointer-events:none}
-@media (hover:hover){.card:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 32px color-mix(in srgb,var(--c) 28%,transparent)}}
-.card:active{transform:scale(.98)}
-.card .ico{position:relative;width:64px;height:64px;border-radius:18px}
-.card .ico svg{width:34px;height:34px}
-.card b{position:relative;font-size:19px;font-weight:800}
-.card p{position:relative;font-size:14px;color:var(--muted);line-height:1.55}
-.card .go{position:relative;margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--c)}
-.card .go::after{content:"→";transition:transform .2s}
-@media (hover:hover){.card:hover .go::after{transform:translateX(4px)}}
+.hello{max-width:1180px;margin:0 auto 22px}
+.hello::before{content:"● SMK Swasta Nusantara Lubuk Pakam";display:inline-block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px}
+.hello h2{font-size:clamp(30px,5.2vw,64px);font-weight:800;line-height:1.04;letter-spacing:-.035em;max-width:16ch}
+.hello p{margin-top:14px;color:var(--muted);font-size:clamp(14px,1.5vw,17px);line-height:1.6;max-width:52ch}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;max-width:1180px;margin:0 auto}
+.card{position:relative;overflow:hidden;grid-column:span 2;min-height:230px;display:flex;flex-direction:column;gap:12px;text-align:left;padding:26px;border-radius:30px;border:1px solid color-mix(in srgb,var(--c) 22%,var(--line));background:color-mix(in srgb,var(--c) 11%,var(--surface));transition:transform .2s,box-shadow .2s}
+.card:nth-child(1){grid-column:span 4;min-height:260px}
+.card:nth-child(3):last-child{grid-column:span 6;min-height:0;flex-direction:row;align-items:center;gap:20px}
+.card::after{content:"";position:absolute;right:-50px;bottom:-50px;width:170px;height:170px;border-radius:50%;background:color-mix(in srgb,var(--c) 16%,transparent);pointer-events:none}
+@media (hover:hover){.card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}}
+.card:active{transform:scale(.985)}
+.card .ico{position:relative;z-index:1;width:68px;height:68px;border-radius:22px;border:0;box-shadow:0 8px 20px color-mix(in srgb,var(--c) 30%,transparent)}
+.card .ico svg{width:36px;height:36px}
+.card b{position:relative;z-index:1;font-size:clamp(19px,2vw,26px);font-weight:800;letter-spacing:-.02em}
+.card p{position:relative;z-index:1;font-size:14px;color:var(--muted);line-height:1.55;max-width:44ch}
+.card .go{position:relative;z-index:1;margin-top:auto;align-self:flex-start;padding:8px 16px;border-radius:999px;background:var(--c);color:#fff;font-size:13px;font-weight:700}
+.card:nth-child(3):last-child .go{margin:0 0 0 auto}
 
 /* Frames */
 .frame{position:absolute;inset:0;background:var(--surface)}
@@ -102,9 +99,9 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 @keyframes pulse{50%{transform:scale(1.06);opacity:.9}}
 
 /* Mode layar penuh: aplikasi memenuhi layar, menu lewat tombol melayang */
-.app.full{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);background:var(--bg)}
+.app.full{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 .app.full .side,.app.full .top{display:none}
-.app.full .main{border-radius:0;box-shadow:none}
+.app.full .frame{border-radius:0}
 body.full{background:var(--bg)}
 .app.full{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .fab{position:fixed;z-index:50;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));touch-action:none}
@@ -125,61 +122,45 @@ body.full{background:var(--bg)}
 .fab-panel .mini svg{width:20px;height:20px}
 .fab-panel hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
 
-/* Layar sangat lebar */
-@media (min-width:1440px){
-  :root{--side-w:320px}
-  .cards,.hello{max-width:1280px}
-  .cards{gap:24px}
+/* Tablet: nama aplikasi disembunyikan bila sempit */
+@media (max-width:860px){
+  .brand div:last-child{display:none}
+  .nav-item{padding:5px}
+  .nav-text{display:none}
+  .card,.card:nth-child(1){grid-column:span 3;min-height:210px}
+  .card:nth-child(3):last-child{grid-column:span 6}
+  .cards{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
-
-/* Tablet: sidebar menjadi rel ikon */
-@media (max-width:1024px){
-  :root{--side-w:92px}
-  .brand div:last-child,.nav-text,.side-foot,.nav::before{display:none}
-  .side{align-items:center;padding:16px 10px}
-  .brand,.nav-item{justify-content:center;padding:8px;width:auto}
-  .brand{background:none;border:0}
-  .brand-mark{width:50px;height:50px}
-  .nav-item[aria-current="page"]::after{right:auto;bottom:-6px;width:20px;height:4px;border-radius:4px;box-shadow:none}
-  .top{padding:12px 18px}
-}
-
-/* HP: menu menjadi dock melayang di bawah */
+/* HP: menu menjadi dock di bawah */
 @media (max-width:640px){
-  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
-  .main{order:1;border-radius:0 0 22px 22px;box-shadow:none}
-  .side{order:2;flex-direction:row;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));gap:0;justify-content:space-around;overflow:visible}
+  .app{grid-template-rows:minmax(0,1fr) auto}
+  .main{order:1}
+  .side{order:2;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));border-bottom:0;border-top:1px solid var(--line);min-height:0;gap:0}
   .brand{display:none}
-  .nav{flex-direction:row;width:100%;justify-content:space-around;gap:4px}
-  .nav-item{flex-direction:column;gap:3px;padding:6px 4px;flex:1;max-width:120px;border-radius:14px}
-  .nav-item[aria-current="page"]{background:var(--navy2);box-shadow:none}
-  .nav-item[aria-current="page"]::after{display:none}
+  .nav{flex:1;max-width:none;width:100%;justify-content:space-around;gap:2px;margin:0;background:none;border:0;padding:0}
+  .nav-item{flex:1;max-width:130px;flex-direction:column;gap:3px;padding:6px 4px;border-radius:16px;justify-content:center}
+  .nav-item[aria-current="page"]{box-shadow:none;background:color-mix(in srgb,var(--c) 16%,transparent)}
   .nav-text{display:block;text-align:center}
-  .nav-text span{display:none}
   .nav-text b{font-size:11px;font-weight:600}
-  .ico{width:38px;height:38px;border-radius:12px}
-  .ico svg{width:22px;height:22px}
-  .nav-item[aria-current="page"] .ico{outline:2px solid #fff;outline-offset:2px}
-  .top{padding:10px 14px;min-height:54px}
-  .top h1{font-size:15px}
+  .ico{width:36px;height:36px}
+  .top{padding:12px 14px 8px;min-height:50px}
   .tbtn span{display:none}
   .tbtn{padding:9px}
-  .home{padding:14px}
-  .hello{padding:22px 20px;border-radius:22px;margin-bottom:16px}
-  .hello::before{font-size:10px;margin-bottom:12px}
+  .frame{border-radius:18px 18px 0 0}
+  .home{padding:4px 14px 20px}
+  .hello{margin-bottom:16px}
   .cards{grid-template-columns:1fr;gap:12px}
-  .card{flex-direction:row;align-items:center;gap:14px;padding:14px 16px;border-radius:20px}
-  .card::before{inset:0 auto 0 0;width:90px;height:auto;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 18%,transparent),transparent)}
-  .card .ico{width:52px;height:52px}
+  .card,.card:nth-child(1),.card:nth-child(3):last-child{grid-column:auto;min-height:0;flex-direction:row;align-items:center;gap:14px;padding:16px;border-radius:22px}
+  .card .ico{width:54px;height:54px;border-radius:18px}
   .card p,.card .go{display:none}
-  .card b{font-size:16px}
+  .card b{font-size:17px}
 }
 /* Layar landscape pendek (HP diputar) */
 @media (max-height:480px) and (orientation:landscape){
-  .top{min-height:46px;padding:6px 14px}
-  .hello{padding:16px 20px;margin-bottom:12px}
-  .hello::before{display:none}
-  .side{padding-top:8px;padding-bottom:8px}
+  .side{min-height:0;padding-top:6px;padding-bottom:6px}
+  .top{min-height:40px;padding:6px 14px}
+  .hello h2{font-size:24px}
+  .hello::before,.hello p{display:none}
 }
 /* Smart Presensi: iframe digeser 3px ke atas untuk menyembunyikan banner Google */
 .frame.shift{overflow:hidden;--shift:3px}
@@ -285,7 +266,7 @@ function icoImg(a){return a.logo?`<img src="${a.logo}" alt="Logo ${a.name}" load
 const ALLOW = ['camera','microphone','geolocation','screen-wake-lock','fullscreen','clipboard-read','clipboard-write','web-share','autoplay','accelerometer','gyroscope','magnetometer','picture-in-picture','display-capture','storage-access','encrypted-media','publickey-credentials-get'].map(x => x + ' *').join('; ');
 const APPS = [
   {id:'smartpresensi', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIpJW9I9kygFde0tcluF66frz5cxRzG2O59ttSwz4mLYS9no7BCAYi6TzAPibwGbvssvgs_MDLoMfKQ0OnOjCeWh_uz4nRDRoGy1_wtZz7hZnlGrbHjbIy6V4JYq3jBKlb5k5Lm8e4u2Gu4ByBOZ66-RMTt55T6DK982YlgdF_eZHMfsooK6AA7Vwt13vu/s320/Logo.png', name:'Smart Presensi', short:'Presensi', desc:'Presensi siswa dengan selfie dan lokasi GPS, dipantau guru dan wali kelas.', url:'https://project-smk.github.io/smartpresensi/', src:'https://script.google.com/macros/s/AKfycbyG7hUzKSvnVtASlSI-s4Q8uWNm4PHATMVfAkeseJ6BytH6NP7-Lgwawyy0NYDg_Xqu/exec', icon:'presensi', color:'#0E9F8B', perm:'camera; fullscreen; geolocation'},
-  {id:'examcbt', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJzTniu51R9LLVcEl8PVlMDbfDN9JBDLPafE_ggxk61atB9ZElpEQc4nfCersGvUdi10chhU6zSrIpc3pVRCIDBCs5KbwYBidCg9yAicr5DQZu2eX_kPeksK34ry144fyZkBrpOSYUZDhliONpYjFzWUb01cX84JuArfBHqfK1jfSddlzXP0M0wcnrHroP/s320/logo_hp_app_1024.png', name:'Exam CBT', short:'Ujian', desc:'Ujian berbasis web untuk siswa, lengkap dengan panel admin.', url:'https://project-smk.github.io/examcbt/', icon:'exam', color:'#2F6FED', perm:'fullscreen'},
+  {id:'examcbt', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgxazscCFHNislI5fg4Te_x6cAOBY56vEuat0ZtepCEyxZploYV8Cm5H9SfdnghSgrfds8JTnB_RbcdaAix_TIoj2FuQqG4vBB3bh7BA1IuohbTiZuzdhMo4afxSVLFrUSgD2gcZVTSkBr-q2fdnG0m9usV89lCwh2AltTrl4TzkA5NqRDaToH95uaZrfRw/s320/favicon.png', name:'Exam CBT', short:'Ujian', desc:'Ujian berbasis web untuk siswa, lengkap dengan panel admin.', url:'https://project-smk.github.io/examcbt/', icon:'exam', color:'#2F6FED', perm:'fullscreen'},
   {id:'ekskulgenius', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYFF978rLcLBHzrktwajEP2NlG0wp3qI5SLsuNDR1CngVe7rlDuj2lurLnEa3J0lLsujPboo5Qc3AAHNFJ-4GRk1nZB5SMnvQmnqtf5eTKOISaDwSDeT_edC_Wd-I3ByMIl2Gy_upN40kbZ1RQH1w2dxPar9wl1sHVcFrpPrm0b9bRzQkPEfM-3vifpZHu/s320/Logo.png', name:'Ekskul Genius', short:'Ekskul', desc:'Kelola kegiatan, anggota, dan prestasi ekstrakurikuler.', url:'https://project-smk.github.io/ekskulgenius/', icon:'ekskul', color:'#EE8A1E', perm:'fullscreen'}
 ];
 const $ = id => document.getElementById(id);
