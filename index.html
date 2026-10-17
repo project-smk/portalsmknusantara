@@ -128,10 +128,21 @@ body.full{background:var(--bg)}
 .tw{display:block;font-family:var(--mono);font-weight:600;color:var(--ink);letter-spacing:.02em;min-height:1.5em;white-space:nowrap}
 .tw-t::after{content:"\258C";color:var(--accent);margin-left:2px;animation:blink 1s steps(1) infinite}
 .tw .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.side-foot .tw{font-size:12px;color:var(--accent);margin-bottom:8px}
-.hello .tw{font-size:clamp(13px,1.5vw,15px);color:var(--ink);margin-bottom:12px}
-.hello .tw::before{content:"\1F4C5  ";filter:grayscale(1)}
-@media (prefers-reduced-motion:reduce){.tw-t::after{animation:none}}
+.hello .tw{font-size:clamp(13px,1.5vw,15px);color:var(--ink);min-width:0}
+.tw-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+
+/* Ikon kalender beranimasi: halaman berbalik, cincin berdenyut */
+.cal{flex:none;width:clamp(30px,2.8vw,38px);height:auto;overflow:visible;filter:drop-shadow(0 0 8px rgba(34,211,238,.45))}
+.cal-body{fill:#EAF3FB}
+.cal-head{fill:#F0506E}
+.cal-ring rect{fill:#0A1119;stroke:#EAF3FB;stroke-width:1}
+.cal-num{font:800 12px var(--mono);fill:#0A1119}
+.cal-dots circle{fill:#F0506E;opacity:.55}
+.cal-glow{fill:none;stroke:var(--accent);stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center;animation:calPulse 2.6s ease-out infinite}
+.cal-page{transform-box:view-box;transform-origin:50% 38%;animation:calFlip 4.5s ease-in-out infinite}
+@keyframes calFlip{0%,70%{transform:scaleY(1)}78%{transform:scaleY(0)}88%,100%{transform:scaleY(1)}}
+@keyframes calPulse{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(1.4)}}
+@media (prefers-reduced-motion:reduce){.tw-t::after,.cal-page,.cal-glow{animation:none}}
 
 /* Layar sangat lebar */
 @media (min-width:1440px){:root{--side-w:304px}.cards,.hello{max-width:1280px}.cards{gap:26px}}
@@ -210,7 +221,7 @@ body.full{background:var(--bg)}
       <div><b>SMK Swasta Nusantara</b><span>Lubuk Pakam</span></div>
     </button>
     <nav class="nav" id="nav" aria-label="Aplikasi sekolah"></nav>
-    <p class="side-foot"><span class="tw" data-tw></span>Portal aplikasi sekolah. Pilih aplikasi di atas untuk membukanya di halaman ini.</p>
+    <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi di atas untuk membukanya di halaman ini.</p>
   </aside>
 
   <section class="main">
@@ -226,7 +237,16 @@ body.full{background:var(--bg)}
     <div class="stage" id="stage">
       <div class="home" id="home">
         <div class="hello">
-          <span class="tw" data-tw></span>
+          <div class="tw-row">
+            <svg class="cal" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <rect class="cal-glow" x="3" y="5" width="26" height="24" rx="5"/>
+              <rect class="cal-body" x="3" y="5" width="26" height="24" rx="5"/>
+              <path class="cal-head" d="M3 10a5 5 0 0 1 5-5h16a5 5 0 0 1 5 5v2H3z"/>
+              <g class="cal-ring"><rect x="9" y="2" width="3" height="7" rx="1.5"/><rect x="20" y="2" width="3" height="7" rx="1.5"/></g>
+              <g class="cal-page"><text class="cal-num" id="calNum" x="16" y="25.5" text-anchor="middle">1</text></g>
+            </svg>
+            <span class="tw" data-tw></span>
+          </div>
           <h2>Pilih aplikasi yang ingin dibuka</h2>
           <p>Presensi, Ujian dan Kegiatan Ekstrakurikuler dapat diakses dalam satu portal.</p>
         </div>
@@ -633,6 +653,14 @@ if(location.hash){
     else if(dir === -1 && n <= 0){ dir = 1; wait = GAP; }
     setTimeout(tick, wait);
   })();
+})();
+</script>
+<script>
+// Angka tanggal pada ikon kalender (selalu mengikuti tanggal perangkat)
+(function(){
+  const n = document.getElementById('calNum'); if(!n) return;
+  const upd = () => { const v = String(new Date().getDate()); if(n.textContent !== v) n.textContent = v; };
+  upd(); setTimeout(() => { upd(); setInterval(upd, 4500); }, 3510);
 })();
 </script>
 </body>
