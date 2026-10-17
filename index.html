@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12263A">
+<link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
+<link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
+<link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
+<meta name="apple-mobile-web-app-title" content="Portal SMK">
 <title>Portal SMK Swasta Nusantara Lubuk Pakam</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,8 +34,8 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 /* Sidebar */
 .side{background:var(--navy);color:var(--side-text);display:flex;flex-direction:column;padding:20px 14px;gap:22px;min-height:0}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 8px;text-align:left;color:#fff;width:100%}
-.brand-mark{flex:none;width:44px;height:44px;border-radius:12px;background:#fff;display:grid;place-items:center}
-.brand-mark svg{width:28px;height:28px}
+.brand-mark{flex:none;width:44px;height:44px;border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.brand-mark img{width:100%;height:100%;display:block;object-fit:contain;padding:3px}
 .brand b{display:block;font-size:15px;font-weight:800;line-height:1.2}
 .brand span{font-size:12px;color:var(--side-text)}
 .nav{display:flex;flex-direction:column;gap:6px}
@@ -148,9 +152,7 @@ body.full{padding-top:0}
 <div class="app" id="app">
   <aside class="side">
     <button class="brand" id="brandBtn" aria-label="Kembali ke beranda portal">
-      <div class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none"><path d="M16 3 3 10l13 7 13-7L16 3Z" fill="#12263A"/><path d="M8 15v6c0 2.5 3.6 5 8 5s8-2.5 8-5v-6l-8 4.3L8 15Z" fill="#0E9F8B"/><path d="M29 10v9" stroke="#EE8A1E" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
+      <div class="brand-mark" aria-hidden="true"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiiqlE-zYGrIu6DveVhY3WdPQFZRtdWBx35gGyI88TQnLzTX5SbI78EVTFbPbTHfvc4BVs79cnjvFariowndXyiK3zPBtNUKL1k3sgJW_xbYRWFscNdoQTprJf6yF6CgKoXERgRyzZiOEXHcHO-bcKmXpHjFVbDTJyPOXzOXgo3555vYH6hA_eNuwUVUSUC/w128-h128-p-k-no-nu/Logo%20SMK%20Nusantara%20Lubuk%20Pakam.png" alt="Logo SMK Nusantara" width="44" height="44"></div>
       <div><b>SMK Swasta Nusantara</b><span>Lubuk Pakam</span></div>
     </button>
     <nav class="nav" id="nav" aria-label="Aplikasi sekolah"></nav>
