@@ -191,21 +191,23 @@ body.full{background:var(--bg)}
   .card .ico{width:54px;height:54px}
   .hello{margin-bottom:20px}
 }
-/* Laptop / desktop: 4 kartu sebaris, tinggi menyesuaikan layar agar tanpa scroll */
+/* Laptop / desktop: 4 kartu sebaris. Ukuran dihitung dari lebar DAN tinggi layar dengan batas minimum,
+   sehingga tampilan di Chrome/Firefox (tinggi jendela berbeda) tetap konsisten, dan bisa di-scroll jika sangat pendek */
 @media (min-width:900px){
-  .home{display:flex;flex-direction:column;padding:clamp(14px,3vh,40px) clamp(20px,3vw,44px)}
-  .hello{margin-top:auto;margin-bottom:clamp(12px,3vh,30px)}
-  .hello h2{font-size:clamp(24px,min(3.4vw,6.2vh),46px)}
-  .hello::before{margin-bottom:clamp(6px,1.4vh,12px)}
-  .hello p{margin-top:clamp(6px,1.2vh,12px)}
-  .cards{margin-bottom:auto;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.6vw,24px)}
-  .card{min-height:0;padding:clamp(14px,2.6vh,24px);gap:clamp(8px,1.6vh,14px)}
-  .card .ico{width:clamp(46px,8vh,66px);height:clamp(46px,8vh,66px)}
-  .card .ico svg{width:clamp(26px,4.4vh,36px);height:clamp(26px,4.4vh,36px)}
-  .card b{font-size:clamp(16px,2.4vh,20px)}
-  .card p{font-size:clamp(12px,1.7vh,14px)}
+  .home{display:flex;flex-direction:column;padding:clamp(20px,4vh,48px) clamp(24px,3.2vw,56px)}
+  .hello{max-width:1400px;margin-top:auto;margin-bottom:clamp(18px,3.6vh,36px)}
+  .hello h2{font-size:clamp(32px,min(4vw,7.2vh),58px)}
+  .hello::before{font-size:clamp(12px,1.6vh,14px);margin-bottom:clamp(8px,1.6vh,14px)}
+  .hello p{margin-top:clamp(8px,1.4vh,14px);font-size:clamp(14px,2vh,17px)}
+  .cards{max-width:1400px;margin-bottom:auto;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.8vw,28px)}
+  .card{min-height:0;padding:clamp(18px,3vh,28px);gap:clamp(10px,1.8vh,16px)}
+  .card .ico{width:clamp(58px,9.5vh,76px);height:clamp(58px,9.5vh,76px)}
+  .card .ico svg{width:clamp(32px,5vh,40px);height:clamp(32px,5vh,40px)}
+  .card b{font-size:clamp(18px,2.8vh,22px)}
+  .card p{font-size:clamp(13px,1.9vh,15px)}
+  .card .go{font-size:clamp(12px,1.7vh,13px);padding:clamp(8px,1.3vh,10px) 16px}
 }
-@media (min-width:900px) and (max-height:640px){
+@media (min-width:900px) and (max-height:520px){
   .hello p,.hello::before{display:none}
   .card p{display:none}
 }
@@ -235,6 +237,15 @@ body.full{background:var(--bg)}
 #selfieOverlay.canflip #selfieFlip{display:inline-block}
 #selfieOverlay #selfieShot{background:#059669;color:#fff}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+/* Perbaikan Firefox Android: env(safe-area-inset-*) bisa bernilai besar sehingga bar menu bawah membengkak */
+@supports (-moz-appearance:none){
+  body{padding-top:0}
+  .app.full{padding-left:0;padding-right:0;padding-bottom:0}
+  .fab{bottom:14px}
+  @media (max-width:640px){
+    .side{padding-bottom:6px}
+  }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
