@@ -10,8 +10,14 @@
   "theme_color": "#05080D",
   "icons": [
     {
-      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png",
-      "sizes": "320x320",
+      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s192/icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s512/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }
