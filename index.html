@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Portal revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan (tablet & HP tetap memakai menu aplikasi). Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
+<!-- Portal revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan; pada HP, bilah menu bawah diganti tombol Pasang aplikasi (PWA: manifest.webmanifest + sw.js); tablet tetap memakai menu aplikasi. Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -9,6 +9,9 @@
 <link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <meta name="apple-mobile-web-app-title" content="Portal SMK">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Portal SMK Swasta Nusantara Lubuk Pakam</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +71,24 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .mc-d.sun{color:#F0506E}
 .mc-d.out{opacity:.35}
 .mc-d.today{background:var(--accent);color:#05080D;font-weight:800;box-shadow:0 0 12px rgba(34,211,238,.5)}
+
+/* HP: bilah bawah berisi tombol "Pasang aplikasi" (menggantikan ikon aplikasi); disembunyikan jika portal sudah dipasang */
+.install-bar{display:none}
+@media (max-width:640px){
+  .nav{display:none}
+  .install-bar{display:block;width:100%}
+  .standalone .side{display:none}
+}
+.install-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent);background:linear-gradient(90deg,rgba(34,211,238,.18),transparent);box-shadow:0 0 16px rgba(34,211,238,.2);text-align:left}
+.install-btn svg{flex:none;width:26px;height:26px;color:var(--accent)}
+.install-btn b{display:block;font-size:14px;font-weight:800}
+.install-btn small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--muted)}
+#installHelp{position:fixed;inset:0;z-index:10001;display:none;align-items:flex-end;justify-content:center;background:rgba(5,8,13,.72)}
+#installHelp.show{display:flex}
+.ih-card{width:min(440px,100%);padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+.ih-card h3{font-size:16px;font-weight:800;margin-bottom:12px}
+.ih-card ol{padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.55}
+.ih-close{margin-top:16px;width:100%;padding:11px;border-radius:8px;border:1px solid var(--line);background:var(--navy2);font-weight:700}
 
 /* Panel utama */
 .main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
@@ -286,6 +307,12 @@ body.full{background:var(--bg)}
       <div class="mc-grid mc-dow" id="mcDow" aria-hidden="true"></div>
       <div class="mc-grid" id="mcDays"></div>
     </section>
+    <div class="install-bar" id="installBar">
+      <button class="install-btn" id="installBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+        <span class="it"><b>Pasang aplikasi</b><small>Tambahkan ke layar utama</small></span>
+      </button>
+    </div>
     <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi untuk membukanya di halaman ini.</p>
   </aside>
 
@@ -336,6 +363,14 @@ body.full{background:var(--bg)}
     <button id="selfieShot" type="button">Ambil Foto</button>
     <button id="selfieFlip" type="button">Balik Kamera</button>
     <button id="selfieCancel" type="button">Batal</button>
+  </div>
+</div>
+
+<div id="installHelp" role="dialog" aria-modal="true" aria-labelledby="ihTitle">
+  <div class="ih-card">
+    <h3 id="ihTitle">Pasang aplikasi di layar utama</h3>
+    <ol id="ihSteps"></ol>
+    <button class="ih-close" id="ihClose" type="button">Mengerti</button>
   </div>
 </div>
 
@@ -806,6 +841,35 @@ if(location.hash){
     render();
   }, 60000);
   render();
+})();
+</script>
+<script>
+// Pasang aplikasi (PWA): memakai dialog bawaan browser bila tersedia, jika tidak tampilkan petunjuk manual
+(function(){
+  const root = document.documentElement;
+  const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  if(standalone()){ root.classList.add('standalone'); return; }
+  if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  const g = id => document.getElementById(id);
+  const help = g('installHelp'), steps = g('ihSteps');
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let dp = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; });
+  window.addEventListener('appinstalled', () => { root.classList.add('standalone'); hide(); });
+  function show(){
+    steps.innerHTML = ios
+      ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
+      : '<li>Ketuk menu <b>⋮</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
+    help.classList.add('show');
+  }
+  function hide(){ help.classList.remove('show'); }
+  g('installBtn').onclick = async () => {
+    if(dp){ const p = dp; dp = null; try{ p.prompt(); await p.userChoice; }catch(e){} return; }
+    show();
+  };
+  g('ihClose').onclick = hide;
+  help.addEventListener('click', e => { if(e.target === help) hide(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') hide(); });
 })();
 </script>
 </body>
