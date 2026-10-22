@@ -856,10 +856,13 @@ if(location.hash){
   let dp = null;
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; });
   window.addEventListener('appinstalled', () => { root.classList.add('standalone'); hide(); });
+  const firefox = /firefox|fxios/i.test(navigator.userAgent);
   function show(){
     steps.innerHTML = ios
       ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
-      : '<li>Ketuk menu <b>⋮</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
+      : firefox
+      ? '<li>Pastikan portal dibuka di <b>tab biasa</b>, bukan tab privat.</li><li>Ketuk menu <b>\u22EE</b> di pojok kanan atas Firefox.</li><li>Pilih <b>Instal</b> atau <b>Tambahkan ke layar utama</b>, lalu ketuk <b>Tambah</b>.</li><li><small>Ingin pemasangan otomatis? Buka portal ini di <b>Chrome</b>.</small></li>'
+      : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
     help.classList.add('show');
   }
   function hide(){ help.classList.remove('show'); }
