@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Portal revisi 6: jembatan kamera untuk Ruang kelas E-Learning (pesan RG_CAM_*), selain jembatan Smart Presensi. -->
+<!-- Portal revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan (tablet & HP tetap memakai menu aplikasi). Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -49,6 +49,25 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .nav-text span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
 .side-foot{margin-top:auto;font-size:12px;line-height:1.6;color:var(--muted);padding:12px;border:1px dashed var(--line);border-radius:8px}
 .side-foot::before{content:"● ONLINE";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:#34D399;margin-bottom:6px}
+
+/* Kalender bulanan di sidebar: hanya tampil di laptop/desktop (>1024px), menggantikan daftar aplikasi */
+.mini-cal{display:none}
+@media (min-width:1025px){
+  .nav{display:none}
+  .mini-cal{display:block;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--navy2)}
+}
+.mini-cal::before{content:"// KALENDER";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);padding:0 4px 8px}
+.mc-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.mc-title{flex:1;min-width:0;padding:6px 4px;border-radius:6px;border:1px solid transparent;text-align:center;font-size:13px;font-weight:800;letter-spacing:.01em}
+.mc-nav{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--line);font-size:17px;line-height:1;transition:border-color .15s,color .15s}
+@media (hover:hover){.mc-nav:hover,.mc-title:hover{border-color:var(--accent);color:var(--accent)}}
+.mc-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+.mc-dow span{padding:4px 0;font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--muted)}
+.mc-dow span:last-child{color:#F0506E}
+.mc-d{display:grid;place-items:center;aspect-ratio:1;border-radius:6px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.mc-d.sun{color:#F0506E}
+.mc-d.out{opacity:.35}
+.mc-d.today{background:var(--accent);color:#05080D;font-weight:800;box-shadow:0 0 12px rgba(34,211,238,.5)}
 
 /* Panel utama */
 .main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
@@ -258,7 +277,16 @@ body.full{background:var(--bg)}
       <div><b>SMK Swasta Nusantara</b><span>Lubuk Pakam</span></div>
     </button>
     <nav class="nav" id="nav" aria-label="Aplikasi sekolah"></nav>
-    <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi di atas untuk membukanya di halaman ini.</p>
+    <section class="mini-cal" id="miniCal" aria-label="Kalender">
+      <div class="mc-head">
+        <button class="mc-nav" id="mcPrev" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
+        <button class="mc-title" id="mcTitle" type="button" title="Kembali ke bulan ini"></button>
+        <button class="mc-nav" id="mcNext" type="button" aria-label="Bulan berikutnya">&#8250;</button>
+      </div>
+      <div class="mc-grid mc-dow" id="mcDow" aria-hidden="true"></div>
+      <div class="mc-grid" id="mcDays"></div>
+    </section>
+    <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi untuk membukanya di halaman ini.</p>
   </aside>
 
   <section class="main">
@@ -739,6 +767,45 @@ if(location.hash){
   const n = document.getElementById('calNum'); if(!n) return;
   const upd = () => { const v = String(new Date().getDate()); if(n.textContent !== v) n.textContent = v; };
   upd(); setTimeout(() => { upd(); setInterval(upd, 4500); }, 3510);
+})();
+</script>
+<script>
+// Kalender bulanan di sidebar laptop: mengikuti tanggal perangkat, minggu dimulai Senin, bisa pindah bulan
+(function(){
+  const root = document.getElementById('miniCal'); if(!root) return;
+  const $c = id => document.getElementById(id);
+  const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const HARI = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+  const same = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  let today = new Date(), y = today.getFullYear(), m = today.getMonth();
+  $c('mcDow').innerHTML = HARI.map(h => '<span>' + h + '</span>').join('');
+  function render(){
+    $c('mcTitle').textContent = BULAN[m] + ' ' + y;
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;      // jumlah hari bulan lalu di baris pertama (Senin = 0)
+    let html = '';
+    for(let i = 0; i < 42; i++){                              // selalu 6 baris agar tinggi kalender stabil
+      const d = new Date(y, m, 1 - lead + i);
+      const cls = ['mc-d'];
+      if(d.getMonth() !== m) cls.push('out');
+      if(i % 7 === 6) cls.push('sun');
+      const isToday = same(d, today); if(isToday) cls.push('today');
+      html += '<span class="' + cls.join(' ') + '"' + (isToday ? ' aria-current="date"' : '') + '>' + d.getDate() + '</span>';
+    }
+    $c('mcDays').innerHTML = html;
+  }
+  function shift(n){ const d = new Date(y, m + n, 1); y = d.getFullYear(); m = d.getMonth(); render(); }
+  function reset(){ y = today.getFullYear(); m = today.getMonth(); render(); }
+  $c('mcPrev').onclick = () => shift(-1);
+  $c('mcNext').onclick = () => shift(1);
+  $c('mcTitle').onclick = reset;
+  // Ganti hari (lewat tengah malam) tanpa perlu memuat ulang halaman
+  setInterval(() => {
+    const n = new Date(); if(same(n, today)) return;
+    const onCurrent = y === today.getFullYear() && m === today.getMonth();
+    today = n; if(onCurrent){ y = n.getFullYear(); m = n.getMonth(); }
+    render();
+  }, 60000);
+  render();
 })();
 </script>
 </body>
