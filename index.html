@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Portal revisi 6: jembatan kamera untuk Ruang kelas E-Learning (pesan RG_CAM_*), selain jembatan Smart Presensi. -->
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -629,11 +630,50 @@ const SPBridge = (function(){
   });
   $('selfieCancel').addEventListener('click', () => { selStop(); send(sel, 'SP_SELFIE_CANCEL'); });
 
+  // ----- Kamera ruang kelas E-Learning (foto berkala atas permintaan aplikasi) -----
+  // Kamera dibuka di portal (halaman induk), karena iframe Apps Script tidak boleh memakai kamera langsung.
+  // Aplikasi meminta: RG_CAM_START -> RG_CAM_READY | RG_CAM_ERROR; RG_CAM_SNAP -> RG_CAM_FRAME; RG_CAM_STOP.
+  const rg = {stream:null};
+  const pip = document.createElement('div');
+  pip.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:9999;display:none;background:#0f1c37;color:#fff;border-radius:12px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.4);font:600 11px system-ui,sans-serif;text-align:center';
+  pip.innerHTML = '<video playsinline muted style="width:96px;height:72px;object-fit:cover;border-radius:8px;transform:scaleX(-1);display:block;background:#000"></video><div style="margin-top:4px">● Kamera ruang kelas aktif</div>';
+  document.body.appendChild(pip);
+  const pv = pip.querySelector('video');
+  function rgReply(e, type, extra){
+    try{ e.source.postMessage(Object.assign({type, id:e.data.id}, extra || {}), e.origin); }catch(x){}
+  }
+  function rgStop(){
+    if(rg.stream){ rg.stream.getTracks().forEach(t => t.stop()); rg.stream = null; }
+    pv.srcObject = null; pip.style.display = 'none';
+  }
+  function rgMsg(e, t){
+    if(t === 'RG_CAM_START'){
+      if(rg.stream){ rgReply(e, 'RG_CAM_READY'); return; }
+      if(!hasCam()){ rgReply(e, 'RG_CAM_ERROR', {message:'Browser tidak mendukung kamera langsung. Gunakan Chrome versi terbaru.'}); return; }
+      getCam('user').then(s => {
+        rg.stream = s; pv.srcObject = s; pip.style.display = 'block';
+        const pl = pv.play(); if(pl && pl.catch) pl.catch(() => {});
+        rgReply(e, 'RG_CAM_READY');
+      }).catch(x => rgReply(e, 'RG_CAM_ERROR', {message:errMsg(x, false, true)}));
+    }else if(t === 'RG_CAM_SNAP'){
+      if(!rg.stream || !pv.videoWidth){ rgReply(e, 'RG_CAM_ERROR', {message:'Kamera belum siap. Coba lagi.'}); return; }
+      const w = Math.min(640, Math.max(64, Number(e.data.w) || 128)), h = Math.min(480, Math.max(48, Number(e.data.h) || 96)), q = Math.min(0.8, Math.max(0.3, Number(e.data.q) || 0.5));
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const vw = pv.videoWidth, vh = pv.videoHeight, ar = w / h;
+      let sw = vw, sh = vw / ar; if(sh > vh){ sh = vh; sw = vh * ar; }
+      c.getContext('2d').drawImage(pv, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, w, h);
+      rgReply(e, 'RG_CAM_FRAME', {dataUrl:c.toDataURL('image/jpeg', q)});
+    }else if(t === 'RG_CAM_STOP'){
+      rgStop();
+    }
+  }
+
   // ----- Pesan dari Smart Presensi -----
   window.addEventListener('message', e => {
-    if(current !== 'smartpresensi') return;
     if(!okOrigin(e.origin) || !e.data || typeof e.data !== 'object') return;
     const t = e.data.type;
+    if(typeof t === 'string' && t.indexOf('RG_') === 0){ if(current === 'elearning') rgMsg(e, t); return; }
+    if(current !== 'smartpresensi') return;
     if(t === 'SP_SCAN_REQUEST'){
       try{ e.source.postMessage({type:'SP_SCAN_ACK'}, e.origin); }catch(x){}
       scanStart(e.source, e.origin);
@@ -646,7 +686,7 @@ const SPBridge = (function(){
       if(rq && !document.fullscreenElement){ try{ const p = rq.call(el); if(p && p.catch) p.catch(() => {}); }catch(x){} }
     }
   });
-  return {stop(){ scanStop(); selStop(); }};
+  return {stop(){ scanStop(); selStop(); rgStop(); }};
 })();
 
 $('brandBtn').onclick = () => goHome();
