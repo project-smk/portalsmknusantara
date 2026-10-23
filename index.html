@@ -865,7 +865,7 @@ if(location.hash){
   function render(){
     btn.classList.toggle('done', done);
     bt.textContent = done ? 'Aplikasi sudah terpasang' : 'Pasang aplikasi';
-    bs.textContent = done ? (inApp ? 'Kamu sedang memakai aplikasi ini' : 'Buka lewat ikon di layar utama') : 'Tambahkan ke layar utama';
+    bs.textContent = done ? (inApp ? 'Kamu sedang memakai aplikasi ini' : 'Buka lewat ikon aplikasi di HP') : (ios ? 'Tambahkan ke layar utama' : firefox ? 'Tambahkan ke Beranda' : 'Pasang sebagai aplikasi di HP');
   }
   function setDone(v){
     done = v;
@@ -879,15 +879,15 @@ if(location.hash){
     if(done){
       title.textContent = 'Aplikasi sudah terpasang';
       steps.innerHTML = inApp
-        ? '<li>Kamu sedang membuka portal dari <b>aplikasi yang sudah terpasang</b>.</li><li>Ikon portal tersedia di <b>layar utama (beranda)</b> HP kamu untuk membukanya kapan saja.</li>'
-        : '<li>Portal sudah ada di <b>layar utama (beranda)</b> HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon di beranda</b> atau daftar aplikasi.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
+        ? '<li>Kamu sedang membuka portal dari <b>aplikasi yang sudah terpasang</b>.</li><li>Buka kapan saja lewat <b>ikon aplikasi</b> di HP kamu.</li>'
+        : '<li>Portal sudah <b>terpasang sebagai aplikasi</b> di HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon aplikasi</b> di daftar aplikasi atau layar HP.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
     }else{
-      title.textContent = 'Pasang aplikasi di layar utama';
+      title.textContent = ios ? 'Pasang aplikasi di layar utama' : firefox ? 'Tambahkan portal ke Beranda' : 'Pasang aplikasi';
       steps.innerHTML = ios
         ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
         : firefox
         ? '<li>Pastikan portal dibuka di <b>tab biasa</b>, bukan tab privat.</li><li>Ketuk menu <b>\u22EE</b> di pojok kanan atas Firefox.</li><li>Pilih <b>Tambahkan ke Beranda</b> (atau <b>Instal</b>), lalu ketuk <b>Tambah</b>.</li><li>Setelah itu, portal muncul sebagai ikon di <b>Beranda</b> HP. Buka portal lewat ikon tersebut.</li><li><small>Ingin pemasangan otomatis? Buka portal ini di <b>Chrome</b>.</small></li>'
-        : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
+        : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> (atau <b>Tambahkan ke layar utama</b>).</li><li>Ketuk <b>Instal</b>, lalu buka portal lewat <b>ikon aplikasi</b> yang muncul di HP.</li>';
     }
     help.classList.add('show');
   }
