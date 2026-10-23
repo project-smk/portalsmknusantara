@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Portal revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan; pada HP, bilah menu bawah diganti tombol Pasang aplikasi (PWA: manifest.webmanifest + sw.js); tablet tetap memakai menu aplikasi. Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
+<!-- Portal revisi 6: jembatan kamera untuk Ruang kelas E-Learning (pesan RG_CAM_*), selain jembatan Smart Presensi. -->
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -9,9 +9,6 @@
 <link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj16gfBS0ZizG1kOVDx3eLqEUyF2hXlDauK_5L3FmVcOFpVndctVpXcXtKP-QPMRBYCjvai1C7xFc5lZqHn8wgvh_9QtAPzm2meXazokEYnDcyTHl5Mp6J4OC9O4HIPP53otAZyOXPcUJJcdKo4WF-EhCljBhIJ3n-_5Wlesy2sdngL1PCmMuZmLTXUdPRI/s320/icon-512.png">
 <meta name="apple-mobile-web-app-title" content="Portal SMK">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest">
 <title>Portal SMK Swasta Nusantara Lubuk Pakam</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,44 +49,6 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .nav-text span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
 .side-foot{margin-top:auto;font-size:12px;line-height:1.6;color:var(--muted);padding:12px;border:1px dashed var(--line);border-radius:8px}
 .side-foot::before{content:"● ONLINE";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:#34D399;margin-bottom:6px}
-
-/* Kalender bulanan di sidebar: hanya tampil di laptop/desktop (>1024px), menggantikan daftar aplikasi */
-.mini-cal{display:none}
-@media (min-width:1025px){
-  .nav{display:none}
-  .mini-cal{display:block;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--navy2)}
-}
-.mini-cal::before{content:"// KALENDER";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);padding:0 4px 8px}
-.mc-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.mc-title{flex:1;min-width:0;padding:6px 4px;border-radius:6px;border:1px solid transparent;text-align:center;font-size:13px;font-weight:800;letter-spacing:.01em}
-.mc-nav{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--line);font-size:17px;line-height:1;transition:border-color .15s,color .15s}
-@media (hover:hover){.mc-nav:hover,.mc-title:hover{border-color:var(--accent);color:var(--accent)}}
-.mc-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
-.mc-dow span{padding:4px 0;font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--muted)}
-.mc-dow span:last-child{color:#F0506E}
-.mc-d{display:grid;place-items:center;aspect-ratio:1;border-radius:6px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
-.mc-d.sun{color:#F0506E}
-.mc-d.out{opacity:.35}
-.mc-d.today{background:var(--accent);color:#05080D;font-weight:800;box-shadow:0 0 12px rgba(34,211,238,.5)}
-
-/* HP: bilah bawah berisi tombol "Pasang aplikasi" (menggantikan ikon aplikasi); berubah hijau jika portal sudah dipasang */
-.install-bar{display:none}
-@media (max-width:640px){
-  .nav{display:none}
-  .install-bar{display:block;width:100%}
-}
-.install-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent);background:linear-gradient(90deg,rgba(34,211,238,.18),transparent);box-shadow:0 0 16px rgba(34,211,238,.2);text-align:left}
-.install-btn svg{flex:none;width:26px;height:26px;color:var(--accent)}
-.install-btn b{display:block;font-size:14px;font-weight:800}
-.install-btn small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--muted)}
-.install-btn.done{border-color:#34D399;background:linear-gradient(90deg,rgba(52,211,153,.16),transparent);box-shadow:0 0 16px rgba(52,211,153,.18)}
-.install-btn.done svg{color:#34D399}
-#installHelp{position:fixed;inset:0;z-index:10001;display:none;align-items:flex-end;justify-content:center;background:rgba(5,8,13,.72)}
-#installHelp.show{display:flex}
-.ih-card{width:min(440px,100%);padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
-.ih-card h3{font-size:16px;font-weight:800;margin-bottom:12px}
-.ih-card ol{padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.55}
-.ih-close{margin-top:16px;width:100%;padding:11px;border-radius:8px;border:1px solid var(--line);background:var(--navy2);font-weight:700}
 
 /* Panel utama */
 .main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
@@ -299,22 +258,7 @@ body.full{background:var(--bg)}
       <div><b>SMK Swasta Nusantara</b><span>Lubuk Pakam</span></div>
     </button>
     <nav class="nav" id="nav" aria-label="Aplikasi sekolah"></nav>
-    <section class="mini-cal" id="miniCal" aria-label="Kalender">
-      <div class="mc-head">
-        <button class="mc-nav" id="mcPrev" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
-        <button class="mc-title" id="mcTitle" type="button" title="Kembali ke bulan ini"></button>
-        <button class="mc-nav" id="mcNext" type="button" aria-label="Bulan berikutnya">&#8250;</button>
-      </div>
-      <div class="mc-grid mc-dow" id="mcDow" aria-hidden="true"></div>
-      <div class="mc-grid" id="mcDays"></div>
-    </section>
-    <div class="install-bar" id="installBar">
-      <button class="install-btn" id="installBtn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
-        <span class="it"><b>Pasang aplikasi</b><small>Tambahkan ke layar utama</small></span>
-      </button>
-    </div>
-    <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi untuk membukanya di halaman ini.</p>
+    <p class="side-foot">Portal aplikasi sekolah. Pilih aplikasi di atas untuk membukanya di halaman ini.</p>
   </aside>
 
   <section class="main">
@@ -367,14 +311,6 @@ body.full{background:var(--bg)}
   </div>
 </div>
 
-<div id="installHelp" role="dialog" aria-modal="true" aria-labelledby="ihTitle">
-  <div class="ih-card">
-    <h3 id="ihTitle">Pasang aplikasi di layar utama</h3>
-    <ol id="ihSteps"></ol>
-    <button class="ih-close" id="ihClose" type="button">Mengerti</button>
-  </div>
-</div>
-
 <div class="fab" id="fab" hidden>
   <div class="fab-panel" id="fabPanel" hidden></div>
   <button class="fab-btn" id="fabBtn" aria-label="Menu portal" aria-expanded="false" aria-controls="fabPanel">
@@ -408,7 +344,7 @@ function icoImg(a){return a.logo?`<img src="${a.logo}" alt="Logo ${a.name}" load
 // Izin fitur perangkat yang diteruskan ke semua aplikasi di dalam iframe
 const ALLOW = ['camera','microphone','geolocation','screen-wake-lock','fullscreen','clipboard-read','clipboard-write','web-share','autoplay','accelerometer','gyroscope','magnetometer','picture-in-picture','display-capture','storage-access','encrypted-media','publickey-credentials-get'].map(x => x + ' *').join('; ');
 const APPS = [
-  {id:'smartpresensi', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIpJW9I9kygFde0tcluF66frz5cxRzG2O59ttSwz4mLYS9no7BCAYi6TzAPibwGbvssvgs_MDLoMfKQ0OnOjCeWh_uz4nRDRoGy1_wtZz7hZnlGrbHjbIy6V4JYq3jBKlb5k5Lm8e4u2Gu4ByBOZ66-RMTt55T6DK982YlgdF_eZHMfsooK6AA7Vwt13vu/s320/Logo.png', name:'Smart Presensi', short:'Presensi', desc:'Presensi siswa dengan selfie dan lokasi GPS, dipantau wali kelas & kepala sekolah.', url:'https://project-smk.github.io/smartpresensi/', src:'https://script.google.com/macros/s/AKfycbyG7hUzKSvnVtASlSI-s4Q8uWNm4PHATMVfAkeseJ6BytH6NP7-Lgwawyy0NYDg_Xqu/exec', icon:'presensi', color:'#0E9F8B', perm:'camera; fullscreen; geolocation'},
+  {id:'smartpresensi', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIpJW9I9kygFde0tcluF66frz5cxRzG2O59ttSwz4mLYS9no7BCAYi6TzAPibwGbvssvgs_MDLoMfKQ0OnOjCeWh_uz4nRDRoGy1_wtZz7hZnlGrbHjbIy6V4JYq3jBKlb5k5Lm8e4u2Gu4ByBOZ66-RMTt55T6DK982YlgdF_eZHMfsooK6AA7Vwt13vu/s320/Logo.png', name:'Smart Presensi', short:'Presensi', desc:'Presensi siswa dengan selfie dan lokasi GPS, dipantau wali kelas & kepala sekolah.', url:'https://project-smk.github.io/smartpresensi/', icon:'presensi', color:'#0E9F8B', perm:'camera; fullscreen; geolocation'},
   {id:'examcbt', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgxazscCFHNislI5fg4Te_x6cAOBY56vEuat0ZtepCEyxZploYV8Cm5H9SfdnghSgrfds8JTnB_RbcdaAix_TIoj2FuQqG4vBB3bh7BA1IuohbTiZuzdhMo4afxSVLFrUSgD2gcZVTSkBr-q2fdnG0m9usV89lCwh2AltTrl4TzkA5NqRDaToH95uaZrfRw/s320/favicon.png', name:'Exam CBT', short:'Ujian', desc:'Ujian online berbasis web yang aman & terstruktur serta deteksi kecurangan siswa.', url:'https://project-smk.github.io/examcbt/', icon:'exam', color:'#2F6FED', perm:'fullscreen'},
   {id:'elearning', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8TphaPisBvhVdSzeuvDu6IFKV1TD-aDyLxO4ESPQ-3iZO7ZgVGXeggAX__jfc5zdK9z4xQdLbrsiqKjb3TX09Vvq96h2o4BxzuJSG47sgxwflPG5wBu_SkyDNaF7YL3nQ5K2yKUT7T8lZuTi1w9mUKbb8iQ_2bJ7yII2x1YeJtybjs2E0hjDJu3FDnrbj/s320/e-learning-full-casing.png', name:'E-Learning', short:'E-Learning', desc:'Belajar online: akses materi, tugas, dan pembelajaran digital untuk siswa dari rumah.', url:'https://project-smk.github.io/elearning/', icon:'elearning', color:'#4F46E5', perm:'fullscreen'},
   {id:'ekskulgenius', logo:'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYFF978rLcLBHzrktwajEP2NlG0wp3qI5SLsuNDR1CngVe7rlDuj2lurLnEa3J0lLsujPboo5Qc3AAHNFJ-4GRk1nZB5SMnvQmnqtf5eTKOISaDwSDeT_edC_Wd-I3ByMIl2Gy_upN40kbZ1RQH1w2dxPar9wl1sHVcFrpPrm0b9bRzQkPEfM-3vifpZHu/s320/Logo.png', name:'Ekskul Genius', short:'Ekskul', desc:'Kelola kegiatan, anggota, dan prestasi ekstrakurikuler.', url:'https://project-smk.github.io/ekskulgenius/', icon:'ekskul', color:'#EE8A1E', perm:'fullscreen'}
@@ -580,7 +516,7 @@ $('fabPanel').addEventListener('click', e => {
 // Apps Script memblokir kamera di dalam aplikasinya, jadi aplikasi meminta halaman induk (portal ini)
 // membuka kamera lalu mengirim hasilnya lewat postMessage. Protokolnya sama dengan halaman pembungkus lama.
 const SPBridge = (function(){
-  const okOrigin = o => /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com)$/.test(o);
+  const okOrigin = o => /^https:\/\/([a-z0-9-]+\.)*(googleusercontent\.com|google\.com)$/.test(o) || o === 'https://project-smk.github.io';
   const scanOv = $('scanOverlay'), scanVid = $('scanVideo'), selOv = $('selfieOverlay'), selVid = $('selfieVideo');
   const scan = {stream:null, timer:0, busy:false, target:null, origin:'', detector:null};
   const sel = {stream:null, target:null, origin:'', rear:false, canFlip:false};
@@ -803,103 +739,6 @@ if(location.hash){
   const n = document.getElementById('calNum'); if(!n) return;
   const upd = () => { const v = String(new Date().getDate()); if(n.textContent !== v) n.textContent = v; };
   upd(); setTimeout(() => { upd(); setInterval(upd, 4500); }, 3510);
-})();
-</script>
-<script>
-// Kalender bulanan di sidebar laptop: mengikuti tanggal perangkat, minggu dimulai Senin, bisa pindah bulan
-(function(){
-  const root = document.getElementById('miniCal'); if(!root) return;
-  const $c = id => document.getElementById(id);
-  const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  const HARI = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
-  const same = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-  let today = new Date(), y = today.getFullYear(), m = today.getMonth();
-  $c('mcDow').innerHTML = HARI.map(h => '<span>' + h + '</span>').join('');
-  function render(){
-    $c('mcTitle').textContent = BULAN[m] + ' ' + y;
-    const lead = (new Date(y, m, 1).getDay() + 6) % 7;      // jumlah hari bulan lalu di baris pertama (Senin = 0)
-    let html = '';
-    for(let i = 0; i < 42; i++){                              // selalu 6 baris agar tinggi kalender stabil
-      const d = new Date(y, m, 1 - lead + i);
-      const cls = ['mc-d'];
-      if(d.getMonth() !== m) cls.push('out');
-      if(i % 7 === 6) cls.push('sun');
-      const isToday = same(d, today); if(isToday) cls.push('today');
-      html += '<span class="' + cls.join(' ') + '"' + (isToday ? ' aria-current="date"' : '') + '>' + d.getDate() + '</span>';
-    }
-    $c('mcDays').innerHTML = html;
-  }
-  function shift(n){ const d = new Date(y, m + n, 1); y = d.getFullYear(); m = d.getMonth(); render(); }
-  function reset(){ y = today.getFullYear(); m = today.getMonth(); render(); }
-  $c('mcPrev').onclick = () => shift(-1);
-  $c('mcNext').onclick = () => shift(1);
-  $c('mcTitle').onclick = reset;
-  // Ganti hari (lewat tengah malam) tanpa perlu memuat ulang halaman
-  setInterval(() => {
-    const n = new Date(); if(same(n, today)) return;
-    const onCurrent = y === today.getFullYear() && m === today.getMonth();
-    today = n; if(onCurrent){ y = n.getFullYear(); m = n.getMonth(); }
-    render();
-  }, 60000);
-  render();
-})();
-</script>
-<script>
-// Pasang aplikasi (PWA): memakai dialog bawaan browser bila tersedia, jika tidak tampilkan petunjuk manual
-(function(){
-  const root = document.documentElement;
-  const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-  const inApp = standalone();
-  if(inApp) root.classList.add('standalone');
-  if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-  const g = id => document.getElementById(id);
-  const help = g('installHelp'), steps = g('ihSteps');
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const KEY = 'portalTerpasang';
-  const btn = g('installBtn'), title = g('ihTitle');
-  const bt = btn.querySelector('b'), bs = btn.querySelector('small');
-  const firefox = /firefox|fxios/i.test(navigator.userAgent);
-  let dp = null, done = false;
-  try{ done = localStorage.getItem(KEY) === '1'; }catch(e){}
-  if(inApp){ done = true; try{ localStorage.setItem(KEY,'1'); }catch(e){} }
-  function render(){
-    btn.classList.toggle('done', done);
-    bt.textContent = done ? 'Aplikasi sudah terpasang' : 'Pasang aplikasi';
-    bs.textContent = done ? (inApp ? 'Kamu sedang memakai aplikasi ini' : 'Buka lewat ikon aplikasi di HP') : (ios ? 'Tambahkan ke layar utama' : firefox ? 'Tambahkan ke Beranda' : 'Pasang sebagai aplikasi di HP');
-  }
-  function setDone(v){
-    done = v;
-    try{ if(v) localStorage.setItem(KEY,'1'); else localStorage.removeItem(KEY); }catch(e){}
-    render();
-  }
-  render();
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; if(done) setDone(false); });
-  window.addEventListener('appinstalled', () => { dp = null; setDone(true); show(); });
-  function show(){
-    if(done){
-      title.textContent = 'Aplikasi sudah terpasang';
-      steps.innerHTML = inApp
-        ? '<li>Kamu sedang membuka portal dari <b>aplikasi yang sudah terpasang</b>.</li><li>Buka kapan saja lewat <b>ikon aplikasi</b> di HP kamu.</li>'
-        : '<li>Portal sudah <b>terpasang sebagai aplikasi</b> di HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon aplikasi</b> di daftar aplikasi atau layar HP.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
-    }else{
-      title.textContent = ios ? 'Pasang aplikasi di layar utama' : firefox ? 'Tambahkan portal ke Beranda' : 'Pasang aplikasi';
-      steps.innerHTML = ios
-        ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
-        : firefox
-        ? '<li>Pastikan portal dibuka di <b>tab biasa</b>, bukan tab privat.</li><li>Ketuk menu <b>\u22EE</b> di pojok kanan atas Firefox.</li><li>Pilih <b>Tambahkan ke Beranda</b> (atau <b>Instal</b>), lalu ketuk <b>Tambah</b>.</li><li>Setelah itu, portal muncul sebagai ikon di <b>Beranda</b> HP. Buka portal lewat ikon tersebut.</li><li><small>Ingin pemasangan otomatis? Buka portal ini di <b>Chrome</b>.</small></li>'
-        : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> (atau <b>Tambahkan ke layar utama</b>).</li><li>Ketuk <b>Instal</b>, lalu buka portal lewat <b>ikon aplikasi</b> yang muncul di HP.</li>';
-    }
-    help.classList.add('show');
-  }
-  function hide(){ help.classList.remove('show'); }
-  btn.onclick = async () => {
-    if(done){ show(); return; }
-    if(dp){ const p = dp; dp = null; try{ p.prompt(); await p.userChoice; }catch(e){} return; }
-    show();
-  };
-  g('ihClose').onclick = hide;
-  help.addEventListener('click', e => { if(e.target === help) hide(); });
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') hide(); });
 })();
 </script>
 </body>
