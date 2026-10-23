@@ -83,6 +83,8 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .install-btn svg{flex:none;width:26px;height:26px;color:var(--accent)}
 .install-btn b{display:block;font-size:14px;font-weight:800}
 .install-btn small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--muted)}
+.install-btn.done{border-color:#34D399;background:linear-gradient(90deg,rgba(52,211,153,.16),transparent);box-shadow:0 0 16px rgba(52,211,153,.18)}
+.install-btn.done svg{color:#34D399}
 #installHelp{position:fixed;inset:0;z-index:10001;display:none;align-items:flex-end;justify-content:center;background:rgba(5,8,13,.72)}
 #installHelp.show{display:flex}
 .ih-card{width:min(440px,100%);padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
@@ -853,20 +855,42 @@ if(location.hash){
   const g = id => document.getElementById(id);
   const help = g('installHelp'), steps = g('ihSteps');
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  let dp = null;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; });
-  window.addEventListener('appinstalled', () => { root.classList.add('standalone'); hide(); });
+  const KEY = 'portalTerpasang';
+  const btn = g('installBtn'), title = g('ihTitle');
+  const bt = btn.querySelector('b'), bs = btn.querySelector('small');
   const firefox = /firefox|fxios/i.test(navigator.userAgent);
+  let dp = null, done = false;
+  try{ done = localStorage.getItem(KEY) === '1'; }catch(e){}
+  function render(){
+    btn.classList.toggle('done', done);
+    bt.textContent = done ? 'Aplikasi sudah terpasang' : 'Pasang aplikasi';
+    bs.textContent = done ? 'Buka lewat ikon di layar utama' : 'Tambahkan ke layar utama';
+  }
+  function setDone(v){
+    done = v;
+    try{ if(v) localStorage.setItem(KEY,'1'); else localStorage.removeItem(KEY); }catch(e){}
+    render();
+  }
+  render();
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; if(done) setDone(false); });
+  window.addEventListener('appinstalled', () => { dp = null; setDone(true); show(); });
   function show(){
-    steps.innerHTML = ios
-      ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
-      : firefox
-      ? '<li>Pastikan portal dibuka di <b>tab biasa</b>, bukan tab privat.</li><li>Ketuk menu <b>\u22EE</b> di pojok kanan atas Firefox.</li><li>Pilih <b>Instal</b> atau <b>Tambahkan ke layar utama</b>, lalu ketuk <b>Tambah</b>.</li><li><small>Ingin pemasangan otomatis? Buka portal ini di <b>Chrome</b>.</small></li>'
-      : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
+    if(done){
+      title.textContent = 'Aplikasi sudah terpasang';
+      steps.innerHTML = '<li>Portal sudah ada di <b>layar utama (beranda)</b> HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon di beranda</b> atau daftar aplikasi.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
+    }else{
+      title.textContent = 'Pasang aplikasi di layar utama';
+      steps.innerHTML = ios
+        ? '<li>Ketuk tombol <b>Bagikan</b> (ikon kotak dengan panah ke atas) pada Safari.</li><li>Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.</li><li>Ketuk <b>Tambah</b>.</li>'
+        : firefox
+        ? '<li>Pastikan portal dibuka di <b>tab biasa</b>, bukan tab privat.</li><li>Ketuk menu <b>\u22EE</b> di pojok kanan atas Firefox.</li><li>Pilih <b>Tambahkan ke Beranda</b> (atau <b>Instal</b>), lalu ketuk <b>Tambah</b>.</li><li>Setelah itu, portal muncul sebagai ikon di <b>Beranda</b> HP. Buka portal lewat ikon tersebut.</li><li><small>Ingin pemasangan otomatis? Buka portal ini di <b>Chrome</b>.</small></li>'
+        : '<li>Ketuk menu <b>\u22EE</b> di pojok kanan atas browser.</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b> atau <b>Tambah</b>.</li>';
+    }
     help.classList.add('show');
   }
   function hide(){ help.classList.remove('show'); }
-  g('installBtn').onclick = async () => {
+  btn.onclick = async () => {
+    if(done){ show(); return; }
     if(dp){ const p = dp; dp = null; try{ p.prompt(); await p.userChoice; }catch(e){} return; }
     show();
   };
