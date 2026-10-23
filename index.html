@@ -72,12 +72,11 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .mc-d.out{opacity:.35}
 .mc-d.today{background:var(--accent);color:#05080D;font-weight:800;box-shadow:0 0 12px rgba(34,211,238,.5)}
 
-/* HP: bilah bawah berisi tombol "Pasang aplikasi" (menggantikan ikon aplikasi); disembunyikan jika portal sudah dipasang */
+/* HP: bilah bawah berisi tombol "Pasang aplikasi" (menggantikan ikon aplikasi); berubah hijau jika portal sudah dipasang */
 .install-bar{display:none}
 @media (max-width:640px){
   .nav{display:none}
   .install-bar{display:block;width:100%}
-  .standalone .side{display:none}
 }
 .install-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--accent);background:linear-gradient(90deg,rgba(34,211,238,.18),transparent);box-shadow:0 0 16px rgba(34,211,238,.2);text-align:left}
 .install-btn svg{flex:none;width:26px;height:26px;color:var(--accent)}
@@ -850,7 +849,8 @@ if(location.hash){
 (function(){
   const root = document.documentElement;
   const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-  if(standalone()){ root.classList.add('standalone'); return; }
+  const inApp = standalone();
+  if(inApp) root.classList.add('standalone');
   if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
   const g = id => document.getElementById(id);
   const help = g('installHelp'), steps = g('ihSteps');
@@ -861,10 +861,11 @@ if(location.hash){
   const firefox = /firefox|fxios/i.test(navigator.userAgent);
   let dp = null, done = false;
   try{ done = localStorage.getItem(KEY) === '1'; }catch(e){}
+  if(inApp){ done = true; try{ localStorage.setItem(KEY,'1'); }catch(e){} }
   function render(){
     btn.classList.toggle('done', done);
     bt.textContent = done ? 'Aplikasi sudah terpasang' : 'Pasang aplikasi';
-    bs.textContent = done ? 'Buka lewat ikon di layar utama' : 'Tambahkan ke layar utama';
+    bs.textContent = done ? (inApp ? 'Kamu sedang memakai aplikasi ini' : 'Buka lewat ikon di layar utama') : 'Tambahkan ke layar utama';
   }
   function setDone(v){
     done = v;
@@ -877,7 +878,9 @@ if(location.hash){
   function show(){
     if(done){
       title.textContent = 'Aplikasi sudah terpasang';
-      steps.innerHTML = '<li>Portal sudah ada di <b>layar utama (beranda)</b> HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon di beranda</b> atau daftar aplikasi.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
+      steps.innerHTML = inApp
+        ? '<li>Kamu sedang membuka portal dari <b>aplikasi yang sudah terpasang</b>.</li><li>Ikon portal tersedia di <b>layar utama (beranda)</b> HP kamu untuk membukanya kapan saja.</li>'
+        : '<li>Portal sudah ada di <b>layar utama (beranda)</b> HP kamu.</li><li>Tutup halaman ini, lalu buka portal lewat <b>ikon di beranda</b> atau daftar aplikasi.</li><li><small>Jika ikonnya sudah dihapus, muat ulang halaman ini untuk memasang kembali.</small></li>';
     }else{
       title.textContent = 'Pasang aplikasi di layar utama';
       steps.innerHTML = ios
