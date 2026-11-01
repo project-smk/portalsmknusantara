@@ -10,13 +10,13 @@
   "theme_color": "#05080D",
   "icons": [
     {
-      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEip_zi2z-zAGKAT2DZoeb5-wy8kvSr0WT5XadNy8RPshUHZlVouFq26AZiHgK4OnG9JU5vkm7wPdlq09PpR_elH9oCIM3brwAOJjwoTKNNFHzhylZzArWeEAYZ1ze6uA6TJy8_SAMKMnOAyRso2_zh-tSikH7qpNfee4tMLCHLlcrPalUTZXoRlj9VY_mAN/s320/logo_portal_ikon_piala_2048.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEip_zi2z-zAGKAT2DZoeb5-wy8kvSr0WT5XadNy8RPshUHZlVouFq26AZiHgK4OnG9JU5vkm7wPdlq09PpR_elH9oCIM3brwAOJjwoTKNNFHzhylZzArWeEAYZ1ze6uA6TJy8_SAMKMnOAyRso2_zh-tSikH7qpNfee4tMLCHLlcrPalUTZXoRlj9VY_mAN/s320/logo_portal_ikon_piala_2048.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
