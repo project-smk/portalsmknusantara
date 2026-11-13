@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Portal revisi 11 (= revisi 9/10 + aplikasi Buku Tamu di iframe: https://project-smk.github.io/bukutamu/ ; grid kartu laptop 5 kolom, tablet 2 kolom dengan kartu terakhir melebar, HP 1 kolom). Portal revisi 9 (= revisi 7 + migrasi GitHub: iframe Smart Presensi ke GitHub, okOrigin github.io). Dasar revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan; pada HP, bilah menu bawah diganti tombol Pasang aplikasi (PWA: manifest.webmanifest + sw.js); tablet tetap memakai menu aplikasi. Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
+<!-- Portal revisi 11 (= revisi 9/10 + jam digital WIB di atas kalender (sidebar laptop) + aplikasi Buku Tamu di iframe: https://project-smk.github.io/bukutamu/ ; grid kartu laptop 5 kolom, tablet 2 kolom dengan kartu terakhir melebar, HP 1 kolom). Portal revisi 9 (= revisi 7 + migrasi GitHub: iframe Smart Presensi ke GitHub, okOrigin github.io). Dasar revisi 7: pada laptop, daftar aplikasi di sidebar diganti kalender bulanan; pada HP, bilah menu bawah diganti tombol Pasang aplikasi (PWA: manifest.webmanifest + sw.js); tablet tetap memakai menu aplikasi. Dasar: revisi 6 (jembatan kamera E-Learning, pesan RG_CAM_*, dan jembatan Smart Presensi). -->
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -60,6 +60,19 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
   .mini-cal{display:block;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--navy2)}
 }
 .mini-cal::before{content:"// KALENDER";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);padding:0 4px 8px}
+/* Jam digital WIB di sidebar laptop (di atas kalender) */
+.mini-clock{display:none}
+@media (min-width:1025px){
+  .mini-clock{display:block;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--navy2)}
+}
+.mini-clock::before{content:"// WAKTU \00B7 WIB";display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);padding:0 4px 8px}
+.mk-time{display:flex;align-items:baseline;justify-content:center;gap:2px;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);text-shadow:0 0 14px rgba(34,211,238,.45);line-height:1.1}
+.mk-hm{font-size:clamp(30px,5.2vh,42px);letter-spacing:.02em}
+.mk-sep{color:var(--accent);animation:blink 1s steps(1) infinite}
+.mk-sec{margin-left:6px;font-size:clamp(16px,2.6vh,21px);color:var(--accent)}
+.mk-greet{margin-top:8px;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.mk-sep{animation:none}}
+@media (min-width:1025px) and (max-height:640px){.mk-greet{display:none}}
 .mc-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
 .mc-title{flex:1;min-width:0;padding:6px 4px;border-radius:6px;border:1px solid transparent;text-align:center;font-size:13px;font-weight:800;letter-spacing:.01em}
 .mc-nav{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--line);font-size:17px;line-height:1;transition:border-color .15s,color .15s}
@@ -310,6 +323,10 @@ body.full{background:var(--bg)}
       <div><b>SMK Swasta Nusantara</b><span>Lubuk Pakam</span></div>
     </button>
     <nav class="nav" id="nav" aria-label="Aplikasi sekolah"></nav>
+    <section class="mini-clock" id="miniClock" aria-label="Jam digital WIB">
+      <div class="mk-time" role="timer" aria-live="off"><span class="mk-hm"><span id="mkH">--</span><span class="mk-sep">:</span><span id="mkM">--</span></span><span class="mk-sec" id="mkS">--</span></div>
+      <div class="mk-greet" id="mkGreet">Selamat datang</div>
+    </section>
     <section class="mini-cal" id="miniCal" aria-label="Kalender">
       <div class="mc-head">
         <button class="mc-nav" id="mcPrev" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
@@ -855,6 +872,31 @@ if(location.hash){
     render();
   }, 60000);
   render();
+})();
+</script>
+<script>
+// Jam digital WIB (Asia/Jakarta, tidak bergantung zona waktu perangkat), diperbarui tiap detik
+(function(){
+  const h = document.getElementById('mkH'); if(!h) return;
+  const m = document.getElementById('mkM'), s = document.getElementById('mkS'), g = document.getElementById('mkGreet');
+  let fmt = null;
+  try{ fmt = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Jakarta', hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23'}); }catch(e){}
+  const p2 = n => String(n).padStart(2, '0');
+  function now(){
+    if(fmt){
+      const o = {}; fmt.formatToParts(new Date()).forEach(x => { o[x.type] = x.value; });
+      return {H:+o.hour % 24, M:o.minute, S:o.second};
+    }
+    const d = new Date(); return {H:d.getHours(), M:p2(d.getMinutes()), S:p2(d.getSeconds())};
+  }
+  function sapa(H){ return H < 4 ? 'Selamat malam' : H < 11 ? 'Selamat pagi' : H < 15 ? 'Selamat siang' : H < 18 ? 'Selamat sore' : 'Selamat malam'; }
+  function tick(){
+    const t = now(), hh = p2(t.H);
+    if(h.textContent !== hh) h.textContent = hh;
+    m.textContent = t.M; s.textContent = t.S;
+    const gr = sapa(t.H); if(g.textContent !== gr) g.textContent = gr;
+  }
+  tick(); setInterval(tick, 1000);
 })();
 </script>
 <script>
